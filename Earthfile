@@ -5,18 +5,17 @@ download-iso:
     # NOTE: Since nixos uses channels, after the installation new package versions etc will be downloaded.
     # So it is not that important to update this ISO base version that frequently!
     ARG NIXOS_ISO_VERSION=24.11
-    RUN wget -O isofile https://channels.nixos.org/nixos-${NIXOS_ISO_VERSION}/latest-nixos-gnome-x86_64-linux.iso
-    SAVE ARTIFACT isofile isofile AS LOCAL build/isofile
+    RUN wget -O isoFileInput https://channels.nixos.org/nixos-${NIXOS_ISO_VERSION}/latest-nixos-gnome-x86_64-linux.iso
+    SAVE ARTIFACT isoFileInput isoFileInput AS LOCAL build/isoFileInput
 
 extract-iso:
     BUILD +download-iso
-    FROM debian:12.8
+    FROM backplane/7z:latest@sha256:cfa611d18f31d823db7bfe2efddeb8b8dc6d83d9785a15cde03bf995f3dc604f
     WORKDIR /workdir
     USER root
-    COPY build/isofile /workdir/isofile
-    RUN mkdir /mnt/extract
-    RUN ls -la isofile && mount -o loop /workdir/isofile /mnt/extract
-    RUN ls -la /mnt/extract
+    COPY build/isoFileInput /workdir/isoFileInput
+    RUN rm -rf /workdir/isoFolder && 7zz x -tiso -y /workdir/isoFileInput -o/workdir/isoFolder
+    SAVE ARTIFACT isoFolder isoFolder AS LOCAL build/isoFolder
 
 all:
     BUILD +download-iso
