@@ -17,6 +17,15 @@ extract-iso:
     RUN rm -rf /workdir/isoFolder && 7zz x -tiso -y /workdir/isoFileInput -o/workdir/isoFolder
     SAVE ARTIFACT isoFolder isoFolder AS LOCAL build/isoFolder
 
+extract-squash-fs:
+    BUILD +extract-iso
+    FROM linuxkit/mkimage-squashfs:a61fd76227ab4998d6c1ba17229cd8bd749e8f13
+    WORKDIR /workdir/input
+    COPY build/isoFolder/nix-store.squashfs /workdir/input/nix-store.squashfs
+    WORKDIR /workdir/output
+    RUN unsquashfs /workdir/input/nix-store.squashfs
+    SAVE ARTIFACT /workdir/output SquashFsFolder AS LOCAL build/SquashFsFolder
+
 all:
     BUILD +download-iso
     BUILD +extract-iso
