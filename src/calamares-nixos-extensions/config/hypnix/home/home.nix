@@ -1,7 +1,6 @@
 { hyprland, pkgs, ...}: {
 
   imports = [
-    #hyprland.homeManagerModules.default
     ./programs
     ./scripts
     ./themes

@@ -17,13 +17,8 @@ in {
   boot.initrd.availableKernelModules = allKernelModulesList;
 
   # dhcp
-  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
-  # (the default) this is the recommended approach. When using systemd-networkd it's
-  # still possible to use this option, but it's recommended to use it in conjunction
-  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
-  #networking.useDHCP = true;
-  #networking.interfaces."${interfaceWifi}".useDHCP = true;
-  #networking.interfaces."${interfaceEth}".useDHCP = true;
+  networking.interfaces."${interfaceWifi}".useDHCP = true;
+  networking.interfaces."${interfaceEth}".useDHCP = true;
 
   # initrd general
   boot.initrd.verbose = true;
@@ -54,12 +49,8 @@ in {
   boot.initrd.systemd.network.networks."10-wlan" = {
     matchConfig.Name = interfaceEth;
     networkConfig.DHCP = "yes";
-  }; 
+  };
 
   # dns
   boot.initrd.services.resolved.enable = true;
-  #boot.initrd.systemd.services."systemd-resolved-custom".unitConfig.source = /etc/systemd/system/systemd-resolved.service;
-  #boot.initrd.systemd.targets.network-online.wants = [ "systemd-resolved.service" ];
-  #boot.initrd.secrets."/etc/systemd/resolved.conf" = /etc/systemd/resolved.conf;
 }
-

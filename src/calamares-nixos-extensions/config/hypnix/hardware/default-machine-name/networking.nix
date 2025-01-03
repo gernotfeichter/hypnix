@@ -3,7 +3,7 @@
   # networking with networkmanager
   networking.networkmanager.enable = true;
 
-  # networking with networkd example config snippets
+  # networking with networkd example config snippets (may be helpful when testing networkd configs for the initrd (clevis-luks.nix))
   # networking.useNetworkd = true;
   # networking.wireless.enable = true;
   # networking.wireless.secretsFile = secrets/wireless.env;
