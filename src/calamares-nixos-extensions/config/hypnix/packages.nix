@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 {
-  users.users."${hypnix.standardUser}".packages = with pkgs; [
+  users.users."${config.hypnix.standardUser}".packages = with pkgs; [
       firefox
       neofetch
       lolcat
