@@ -11,6 +11,8 @@
     systemd.enable = true;
     #nvidiaPatches = true;
     extraConfig = ''
+    # Docu
+    # See https://wiki.hyprland.org/Configuring/ for options used in this file!
 
     # Monitor
     monitor=,preferred,auto,1

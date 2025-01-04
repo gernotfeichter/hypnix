@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 {
   users.users."${config.hypnix.standardUser}".packages = with pkgs; [
+      # For a list of available packages,see: https://search.nixos.org/packages
       firefox
       neofetch
       lolcat
@@ -32,6 +33,7 @@
    ];
 
   environment.systemPackages = with pkgs; [
+    # For a list of available packages,see: https://search.nixos.org/packages
     networkmanager
     wget
     clevis

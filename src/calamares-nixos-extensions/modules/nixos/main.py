@@ -262,7 +262,7 @@ cfgmisc = """  # Enable CUPS to print documents.
 
 """
 cfgusers = """  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.@@username@@ = {
+  users.users."${config.hypnix.standardUser}" = {
     isNormalUser = true;
     description = "@@fullname@@";
     extraGroups = [ @@groups@@ ];
@@ -278,7 +278,7 @@ cfgfirefox = """  # Install firefox.
 
 cfgautologin = """  # Enable automatic login for the user.
   services.xserver.displayManager.autoLogin.enable = true;
-  services.xserver.displayManager.autoLogin.user = "@@username@@";
+  services.xserver.displayManager.autoLogin.user = "${config.hypnix.standardUser}";
 
 """
 
@@ -289,7 +289,7 @@ cfgautologingdm = """  # Workaround for GNOME autologin: https://github.com/NixO
 """
 
 cfgautologintty = """  # Enable automatic login for the user.
-  services.getty.autologinUser = "@@username@@";
+  services.getty.autologinUser = "${config.hypnix.standardUser}";
 
 """
 
@@ -379,6 +379,22 @@ def catenate(d, key, *values):
 
     d[key] = "".join(values)
 
+def add_hypnix_base_config_tree(hypnix_variables, source_template_path, dest_config_base_path):
+    # copy base tree
+
+    # handle files that require substitution (hypnix/configuration.nix)
+    with open(source_template_path, "r") as hypnix_config_template_file:
+        # read un-templated file
+        hypnix_config_template_file_txt = hypnix_config_template_file.read()
+
+        # do the substitutions
+        for key in hypnix_variables.keys():
+            pattern = "@@{key}@@".format(key=key)
+            hypnix_config_template_file_txt = hypnix_config_template_file_txt.replace(pattern, str(hypnix_variables[key]))
+
+        # write file
+        with open(os.path.join(dest_config_base_path, "configuration.nix"), 'w') as hypnix_config:
+            hypnix_config.write(hypnix_config_template_file_txt)
 
 def run():
     """NixOS Configuration."""
@@ -390,11 +406,15 @@ def run():
     # Create initial config file
     cfg = cfghead
     gs = libcalamares.globalstorage
-    variables = dict()
+    hypnix_variables = dict() ## used for hypnix parent/entrypoint/main configuration.nix (/etc/nixos/configuration.nix)
+    variables = dict() ## used for traditional NixOS configuration (placed in /etc/nixos/hardware/default-machine-name/configuration.nix)
 
     # Setup variables
+    calamares_base_path = "/run/current-system/sw/share/calamares"
     root_mount_point = gs.value("rootMountPoint")
-    config = os.path.join(root_mount_point, "etc/nixos/configuration.nix")
+    hardware_config_folder = os.path.join(root_mount_point, "etc", "nixos", "hardware", "default-machine-name")
+    hardware_config_path = os.path.join(hardware_config_folder, "hardware-configuration.nix")
+    config_path = os.path.join(root_mount_point, hardware_config_folder, "configuration.nix")  # yes, even configuration.nix contains hardware-specifics, hence in the hardware_folder!
     fw_type = gs.value("firmwareType")
     bootdev = (
         "nodev"
@@ -675,23 +695,35 @@ def run():
         cfg += cfgmisc
 
     if gs.value("username") is not None:
-        fullname = gs.value("fullname")
-        groups = ["networkmanager", "wheel"]
+        raise Exception("Mandatory propety username not defined!")
 
-        cfg += cfgusers
-        catenate(variables, "username", gs.value("username"))
-        catenate(variables, "fullname", fullname)
-        catenate(variables, "groups", (" ").join(['"' + s + '"' for s in groups]))
-        if (
-            gs.value("autoLoginUser") is not None
-            and gs.value("packagechooser_packagechooser") is not None
-            and gs.value("packagechooser_packagechooser") != ""
-        ):
-            cfg += cfgautologin
-            if gs.value("packagechooser_packagechooser") == "gnome":
-                cfg += cfgautologingdm
-        elif gs.value("autoLoginUser") is not None:
-            cfg += cfgautologintty
+    username = gs.value("username")
+    fullname = gs.value("fullname")
+    groups = ["networkmanager", "wheel"]
+
+    cfg += cfgusers
+    catenate(hypnix_variables, "username", username)
+
+    # geneate hypnix base config (NixOs standard config files (configuration.nix and hardware-confguration.nix) will be merged in later below!)
+    libcalamares.job.setprogress(0.20)
+    add_hypnix_base_config_tree(
+        hypnix_variables,
+        os.path.join(calamares_base_path, "hypnix", "configuration.nix"),
+        os.path.join(root_mount_point, "etc", "nixos"
+    )
+
+    catenate(variables, "fullname", fullname)
+    catenate(variables, "groups", (" ").join(['"' + s + '"' for s in groups]))
+    if (
+        gs.value("autoLoginUser") is not None
+        and gs.value("packagechooser_packagechooser") is not None
+        and gs.value("packagechooser_packagechooser") != ""
+    ):
+        cfg += cfgautologin
+        if gs.value("packagechooser_packagechooser") == "gnome":
+            cfg += cfgautologingdm
+    elif gs.value("autoLoginUser") is not None:
+        cfg += cfgautologintty
 
     if gs.value("packagechooser_packagechooser") != "":
         cfg += cfgfirefox
@@ -746,7 +778,7 @@ def run():
     try:
         # Generate hardware.nix with mounted swap device
         subprocess.check_output(
-            ["pkexec", "nixos-generate-config", "--root", root_mount_point],
+            ["pkexec", "nixos-generate-config", "--root", root_mount_point + hardware_config_folder],
             stderr=subprocess.STDOUT,
         )
     except subprocess.CalledProcessError as e:
@@ -755,7 +787,7 @@ def run():
         return (_("nixos-generate-config failed"), _(e.output.decode("utf8")))
 
     # Check for unfree stuff in hardware-configuration.nix
-    hf = open(root_mount_point + "/etc/nixos/hardware-configuration.nix", "r")
+    hf = open(hardware_config_path, "r")
     htxt = hf.read()
     search = re.search(r"boot\.extraModulePackages = \[ (.*) \];", htxt)
 
@@ -797,14 +829,14 @@ def run():
             [
                 "cp",
                 "/dev/stdin",
-                root_mount_point + "/etc/nixos/hardware-configuration.nix",
+                hardware_config_path,
             ],
             None,
             hardwareout,
         )
 
     # Write the configuration.nix file
-    libcalamares.utils.host_env_process_output(["cp", "/dev/stdin", config], None, cfg)
+    libcalamares.utils.host_env_process_output(["cp", "/dev/stdin", config_path], None, cfg)
 
     status = _("Installing NixOS")
     libcalamares.job.setprogress(0.3)

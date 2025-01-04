@@ -6,6 +6,6 @@ The code in this folder contains the calameres (nixos installation program - liv
 
 Notable changes after forking:
 - The original README was renamed to [README_from_fork.md](README_from_fork.md).
-- Non-relevant desktop enivironments were removed.
+- Non-relevant desktop enivironments were removed from config files, not so from the code (should not hurt much), to reduce git conflict potential of this fork.
 - The default size of the `/boot` partition was increased from `512MB` to `5GB` to avoid the common error `No space left on /boot` - https://discourse.nixos.org/t/no-space-left-on-boot/24019/11.
-- TODO: Hypnix specific config re-writing
+- Hypnix specific config re-writing, 

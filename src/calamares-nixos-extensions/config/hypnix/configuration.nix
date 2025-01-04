@@ -19,7 +19,7 @@
   };
 
   config = {
-    hypnix.standardUser = "nix";
+    hypnix.standardUser = "@@username@@";
   };
 
 }
