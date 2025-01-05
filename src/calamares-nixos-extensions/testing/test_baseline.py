@@ -1,4 +1,5 @@
 import subprocess
+import sys
 
 
 BASELINE_CFG = """# Edit this configuration file to define what should be installed on

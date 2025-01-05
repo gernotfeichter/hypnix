@@ -381,6 +381,7 @@ def catenate(d, key, *values):
 
 def add_hypnix_base_config_tree(hypnix_variables, source_template_path, dest_config_base_path):
     # copy base tree
+    TODO: Gernot
 
     # handle files that require substitution (hypnix/configuration.nix)
     with open(source_template_path, "r") as hypnix_config_template_file:
@@ -694,7 +695,7 @@ def run():
     ):
         cfg += cfgmisc
 
-    if gs.value("username") is not None:
+    if gs.value("username") is None or gs.value("username") == "":
         raise Exception("Mandatory propety username not defined!")
 
     username = gs.value("username")
@@ -709,7 +710,7 @@ def run():
     add_hypnix_base_config_tree(
         hypnix_variables,
         os.path.join(calamares_base_path, "hypnix", "configuration.nix"),
-        os.path.join(root_mount_point, "etc", "nixos"
+        os.path.join(root_mount_point, "etc", "nixos")
     )
 
     catenate(variables, "fullname", fullname)

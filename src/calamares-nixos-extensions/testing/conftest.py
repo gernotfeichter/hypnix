@@ -24,7 +24,7 @@ def mock_gettext_translation(mocker, mock_translation_gettext):
 @pytest.fixture
 def globalstorage():
     return {
-        "rootMountPoint": "/mnt/root",
+        "rootMountPoint": "testmountpoint",
         "firmwareType": "efi",
         "partitions": [],
         "keyboardLayout": "us",
@@ -98,6 +98,9 @@ def mock_libcalamares(mocker, globalstorage):
 def mock_open_hwconf(mocker):
     return mocker.Mock('open("hardware-configuration.nix")')
 
+@pytest.fixture
+def mock_open_hypnix_configuration(mocker):
+    return mocker.Mock('open("/run/current-system/sw/share/calamares/hypnix/configuration.nix")')
 
 @pytest.fixture
 def mock_open_kbdmodelmap(mocker):
@@ -105,12 +108,16 @@ def mock_open_kbdmodelmap(mocker):
 
 
 @pytest.fixture
-def mock_open(mocker, mock_open_hwconf, mock_open_kbdmodelmap):
+def mock_open(mocker, mock_open_hwconf, mock_open_kbdmodelmap, mock_open_hypnix_configuration):
     testing_dir = os.path.dirname(__file__)
 
     hwconf_txt = ""
     with open(os.path.join(testing_dir, "hardware-configuration.nix"), "r") as hwconf:
         hwconf_txt = hwconf.read()
+
+    hypnix_configuration_txt = ""
+    with open(os.path.join(testing_dir, "..", "config", "hypnix", "configuration.nix"), "r") as hypnix_configuration:
+        hypnix_configuration_txt = hypnix_configuration.read()
 
     kbdmodelmap_txt = ""
     with open(os.path.join(testing_dir, "kbd-model-map"), "r") as kbdmodelmap:
@@ -121,16 +128,17 @@ def mock_open(mocker, mock_open_hwconf, mock_open_kbdmodelmap):
     def fake_open(*args):
         file, mode, *_ = args
 
-        assert mode == "r", "open() called without the 'r' mode"
-
-        if file.endswith("hardware-configuration.nix"):
-            return mocker.mock_open(mock=mock_open_hwconf, read_data=hwconf_txt)(*args)
-        elif file.endswith("kbd-model-map"):
-            return mocker.mock_open(
-                mock=mock_open_kbdmodelmap, read_data=kbdmodelmap_txt
-            )(*args)
-        else:
-            raise AssertionError(f"open() called with unexpected file '{file}'")
+        if mode == "r":
+            if file.endswith("hardware-configuration.nix"):
+                return mocker.mock_open(mock=mock_open_hwconf, read_data=hwconf_txt)(*args)
+            elif file.endswith("hypnix/configuration.nix"):
+                return mocker.mock_open(mock=mock_open_hypnix_configuration, read_data=hypnix_configuration_txt)(*args)
+            elif file.endswith("kbd-model-map"):
+                return mocker.mock_open(
+                    mock=mock_open_kbdmodelmap, read_data=kbdmodelmap_txt
+                )(*args)
+            else:
+                raise AssertionError(f"open() called with 'r', but unexpected file '{file}'")
 
     mock_open.side_effect = fake_open
 
