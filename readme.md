@@ -7,7 +7,7 @@ A [NixOS](https://nixos.org) based Linux distribution using a [Hyprland](https:/
 # features
 - window auto-tiling (no screen waste per default!)
 - desktop environment heavily shortcut based (vs traditional ones that are normally mouse based)
-- no password typing required for
+- no password typing required for (todo: docu)
   - full disk decryption (through network based disk decryption)
   - terminal commands (more precisely PAM based commands, such as `sudo`etc.)
 

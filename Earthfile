@@ -9,7 +9,9 @@ download-iso:
     SAVE ARTIFACT isoFileInput isoFileInput AS LOCAL build/isoFileInput
 
 extract-iso:
-    BUILD +download-iso
+    WAIT
+        BUILD +download-iso
+    END
     FROM backplane/7z:latest@sha256:cfa611d18f31d823db7bfe2efddeb8b8dc6d83d9785a15cde03bf995f3dc604f
     WORKDIR /workdir
     USER root
@@ -18,14 +20,28 @@ extract-iso:
     SAVE ARTIFACT isoFolder isoFolder AS LOCAL build/isoFolder
 
 extract-squash-fs:
-    BUILD +extract-iso
+    WAIT
+        BUILD +extract-iso
+    END
     FROM linuxkit/mkimage-squashfs:a61fd76227ab4998d6c1ba17229cd8bd749e8f13
     WORKDIR /workdir/input
     COPY build/isoFolder/nix-store.squashfs /workdir/input/nix-store.squashfs
     WORKDIR /workdir/output
     RUN unsquashfs /workdir/input/nix-store.squashfs
-    SAVE ARTIFACT /workdir/output SquashFsFolder AS LOCAL build/SquashFsFolder
+    SAVE ARTIFACT /workdir/output/squashfs-root SquashFsFolder AS LOCAL build/SquashFsFolder
+
+patch-squash-fs:
+    WAIT
+        BUILD +extract-squash-fs
+    END
+    FROM linuxkit/mkimage-squashfs:a61fd76227ab4998d6c1ba17229cd8bd749e8f13
+    WORKDIR /workdir
+    COPY build/SquashFsFolder /workdir/SquashFsFolder
+    COPY src/calamares-nixos-extensions/config/ /workdir/SquashFsFolder/vxzvcmrq3ljxwa5qb3jb5aqq2mvhb23x-calamares-nixos-extensions-0.3.19/share/calamares/config/
+    COPY src/calamares-nixos-extensions/modules/ /workdir/SquashFsFolder/vxzvcmrq3ljxwa5qb3jb5aqq2mvhb23x-calamares-nixos-extensions-0.3.19/lib/calamares/modules/
+    SAVE ARTIFACT /workdir/SquashFsFolder/ SquashFsFolderPatched AS LOCAL build/SquashFsFolderPatched
 
 all:
-    BUILD +download-iso
-    BUILD +extract-iso
+    WAIT
+        BUILD +patch-squash-fs
+    END

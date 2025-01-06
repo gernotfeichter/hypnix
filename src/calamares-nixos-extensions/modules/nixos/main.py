@@ -381,7 +381,7 @@ def catenate(d, key, *values):
 
 def add_hypnix_base_config_tree(hypnix_variables, source_template_path, dest_config_base_path):
     # copy base tree
-    TODO: Gernot
+    # TODO: Gernot
 
     # handle files that require substitution (hypnix/configuration.nix)
     with open(source_template_path, "r") as hypnix_config_template_file:
@@ -394,8 +394,15 @@ def add_hypnix_base_config_tree(hypnix_variables, source_template_path, dest_con
             hypnix_config_template_file_txt = hypnix_config_template_file_txt.replace(pattern, str(hypnix_variables[key]))
 
         # write file
-        with open(os.path.join(dest_config_base_path, "configuration.nix"), 'w') as hypnix_config:
-            hypnix_config.write(hypnix_config_template_file_txt)
+        hackyWayToWriteFile(os.path.join(dest_config_base_path, "configuration.nix"), hypnix_config_template_file_txt)
+
+def hackyWayToWriteFile(filepath: str, content: list[bytes]):
+    """
+    The original authors of this script seem to have decided that writing files should not be done via the traditional python open function.
+    The reason for that seems that all calls to open are mocked, when executing the tests.
+    That seems to be why writing files is done in such an ackward way: not to interfere with the mockings for reading stuff.
+    """
+    libcalamares.utils.host_env_process_output(["cp", "/dev/stdin", filepath], None, content)
 
 def run():
     """NixOS Configuration."""
@@ -415,7 +422,7 @@ def run():
     root_mount_point = gs.value("rootMountPoint")
     hardware_config_folder = os.path.join(root_mount_point, "etc", "nixos", "hardware", "default-machine-name")
     hardware_config_path = os.path.join(hardware_config_folder, "hardware-configuration.nix")
-    config_path = os.path.join(root_mount_point, hardware_config_folder, "configuration.nix")  # yes, even configuration.nix contains hardware-specifics, hence in the hardware_folder!
+    config_path = os.path.join(hardware_config_folder, "configuration.nix")  # yes, even configuration.nix contains hardware-specifics, hence in the hardware_folder!
     fw_type = gs.value("firmwareType")
     bootdev = (
         "nodev"
@@ -779,7 +786,7 @@ def run():
     try:
         # Generate hardware.nix with mounted swap device
         subprocess.check_output(
-            ["pkexec", "nixos-generate-config", "--root", root_mount_point + hardware_config_folder],
+            ["pkexec", "nixos-generate-config", "--root", hardware_config_folder],
             stderr=subprocess.STDOUT,
         )
     except subprocess.CalledProcessError as e:

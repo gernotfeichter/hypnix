@@ -29,7 +29,7 @@ BASELINE_CFG = """# Edit this configuration file to define what should be instal
   networking.networkmanager.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.username = {
+  users.users."${config.hypnix.standardUser}" = {
     isNormalUser = true;
     description = "fullname";
     extraGroups = [ "networkmanager" "wheel" ];
@@ -110,35 +110,38 @@ def test_baseline(
     # The baseline configuration should not raise any warnings.
     mock_libcalamares.utils.warning.assert_not_called()
 
+    # libcalamares.job.setprogress(0.20)
+    assert mock_libcalamares.job.setprogress.mock_calls[2] == mocker.call(0.20)
+
     # libcalamares.job.setprogress(0.25)
-    assert mock_libcalamares.job.setprogress.mock_calls[2] == mocker.call(0.25)
+    assert mock_libcalamares.job.setprogress.mock_calls[3] == mocker.call(0.25)
 
     # subprocess.check_output(
     #     ["pkexec", "nixos-generate-config", "--root", root_mount_point], stderr=subprocess.STDOUT)
     assert mock_check_output.mock_calls[0] == mocker.call(
-        ["pkexec", "nixos-generate-config", "--root", "/mnt/root"],
+        ["pkexec", "nixos-generate-config", "--root", "testmountpoint/etc/nixos/hardware/default-machine-name"],
         stderr=subprocess.STDOUT,
     )
 
     # hf = open(root_mount_point + "/etc/nixos/hardware-configuration.nix", "r")
     mock_open_hwconf.assert_called_once_with(
-        "/mnt/root/etc/nixos/hardware-configuration.nix", "r"
+        "testmountpoint/etc/nixos/hardware/default-machine-name/hardware-configuration.nix", "r"
     )
 
     # libcalamares.utils.host_env_process_output(
     #     ["cp", "/dev/stdin", config], None, cfg)
-    mock_libcalamares.utils.host_env_process_output.assert_called_once_with(
-        ["cp", "/dev/stdin", "/mnt/root/etc/nixos/configuration.nix"], None, mocker.ANY
+    mock_libcalamares.utils.host_env_process_output.assert_called_with(
+        ["cp", "/dev/stdin", "testmountpoint/etc/nixos/hardware/default-machine-name/configuration.nix"], None, mocker.ANY
     )
     cfg = mock_libcalamares.utils.host_env_process_output.call_args[0][2]
     assert cfg == BASELINE_CFG
 
     # libcalamares.job.setprogress(0.3)
-    assert mock_libcalamares.job.setprogress.mock_calls[3] == mocker.call(0.3)
+    assert mock_libcalamares.job.setprogress.mock_calls[4] == mocker.call(0.3)
 
     # proc = subprocess.Popen(["pkexec", "nixos-install", "--no-root-passwd", "--root", root_mount_point], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     mock_Popen.assert_called_once_with(
-        ["pkexec", "nixos-install", "--no-root-passwd", "--root", "/mnt/root"],
+        ["pkexec", "nixos-install", "--no-root-passwd", "--root", "testmountpoint"],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     )
