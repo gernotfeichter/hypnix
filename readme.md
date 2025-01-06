@@ -38,9 +38,10 @@ nixos-rebuild switch --impure
     - `secrets`:
       - `luks.jwe`: Only required when using clevis (see `clevis.nix`). This file can be generated via the provided snippet, but requires a running tang server: `echo -n '<your luks passphrase>' | clevis encrypt tang '{"url": "http://<your tang server>:<your tang port>"}' > luks.jwe`
       - `wireless.env`: Generally only required when using clevis along with a WIFI based network connection (see `clevis.nix`). File content looks like: `WIFI_PASS=<ENTER_YOUR_PASSWORD_HERE>`. Another use case for this file would be, if instead of Networkmanager (default for hypnix), you prefer to use another network config mechanism, e.g. systemd-networkd, but even then to make use of this, you would need to explicitly honor this file by config snippets that you also find in `clevis.nix`.
-  - `home`: Things managed by home manager.
+  - `home`: Things managed by [home manager](https://github.com/nix-community/home-manager). This sub-tree docu is not a complete listing, check out the sub folders in /etc/nixos/home for the complete config!
     - `programs`
       - `hypr`: Hyprland config file, this includes monitor configuration!
+
 # todos
 
 - test screensharing/video conferencing
@@ -52,3 +53,8 @@ nixos-rebuild switch --impure
   Ideas: If existing language servers/IDEs provide a good enough base for this, maybe we can re-use that as basis, but this could get complex quickly.
   Maybe it's better to start with a primitive/narrowed down package install ui.
 - cleanup/unify package installations, e.g. currently some packages are installed via home manager, some outside, which I don't like.
+
+# tribute
+
+The basic nix code setup of running Hyprland on NixOS with HomeManager came from [HeinzDev](https://github.com/HeinzDev/Hyprland-dotfiles).
+I transformed the original flake setup into the traditional NixOS module system, which I believe to be better suited for multi-platform support.
