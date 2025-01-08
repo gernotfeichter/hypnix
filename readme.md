@@ -5,11 +5,12 @@
 A [NixOS](https://nixos.org) based Linux distribution using a [Hyprland](https://hyprland.org) based desktop environment.
 
 # features
+- modern linux desktop (window animations)
 - window auto-tiling (no screen waste per default!)
 - desktop environment heavily shortcut based (vs traditional ones that are normally mouse based)
-- no password typing required for (todo: docu)
+- no password typing required for standard actions (todo: docu since this is not active per default and it requires third party services to be configured correctly)
   - full disk decryption (through network based disk decryption)
-  - terminal commands (more precisely PAM based commands, such as `sudo`etc.)
+  - terminal commands (more precisely PAM based commands, such as `sudo` etc.)
 
 # config changes
 
@@ -53,6 +54,15 @@ nixos-rebuild switch --impure
   Ideas: If existing language servers/IDEs provide a good enough base for this, maybe we can re-use that as basis, but this could get complex quickly.
   Maybe it's better to start with a primitive/narrowed down package install ui.
 - cleanup/unify package installations, e.g. currently some packages are installed via home manager, some outside, which I don't like.
+
+# building/releasing
+
+This project can be built with:
+```
+sudo earthly +all
+```
+Note: `sudo` because `SAVE ARTIFACT ... AS LOCAL` creates files/folders belonging to root. However, those are only created inside the build subfolder of this project, which gets created when running above command at least partially successfully. Getting 
+
 
 # tribute
 
