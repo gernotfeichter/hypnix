@@ -61,8 +61,9 @@ This project can be built with:
 ```
 sudo earthly +all
 ```
-Note: `sudo` because `SAVE ARTIFACT ... AS LOCAL` creates files/folders belonging to root. However, those are only created inside the build subfolder of this project, which gets created when running above command at least partially successfully. Getting 
+Note: `sudo` because `SAVE ARTIFACT ... AS LOCAL` creates files/folders belonging to root. However, those are only created inside the build subfolder of this project, which gets created when running above command at least partially successfully.
 
+The release command/process is to be documented, after all this is merely a note for the maintainer (currently the owner only).
 
 # tribute
 
