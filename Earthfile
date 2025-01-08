@@ -28,10 +28,17 @@ patch-squash-fs:
     BUILD +extract-squash-fs
     FROM linuxkit/mkimage-squashfs:a61fd76227ab4998d6c1ba17229cd8bd749e8f13
     WORKDIR /workdir
-    COPY +extract-squash-fs/squashfs-root /workdir/squashfs-root
-    COPY src/calamares-nixos-extensions/config/ /workdir/squashfs-root/vxzvcmrq3ljxwa5qb3jb5aqq2mvhb23x-calamares-nixos-extensions-0.3.19/share/calamares/config/
-    COPY src/calamares-nixos-extensions/modules/ /workdir/squashfs-root/vxzvcmrq3ljxwa5qb3jb5aqq2mvhb23x-calamares-nixos-extensions-0.3.19/lib/calamares/modules/
-    SAVE ARTIFACT /workdir/squashfs-root/ AS LOCAL build/squashfs-root-patched
+    COPY +extract-squash-fs/squashfs-root /workdir/squashfs-root-patched
+    COPY src/calamares-nixos-extensions/config/ /workdir/squashfs-root-patched/vxzvcmrq3ljxwa5qb3jb5aqq2mvhb23x-calamares-nixos-extensions-0.3.19/share/calamares/config/
+    COPY src/calamares-nixos-extensions/modules/ /workdir/squashfs-root-patched/vxzvcmrq3ljxwa5qb3jb5aqq2mvhb23x-calamares-nixos-extensions-0.3.19/lib/calamares/modules/
+    SAVE ARTIFACT /workdir/squashfs-root-patched/ AS LOCAL build/squashfs-root-patched
+pack-squash-fs:
+    BUILD +patch-squash-fs
+    FROM linuxkit/mkimage-squashfs:a61fd76227ab4998d6c1ba17229cd8bd749e8f13
+    WORKDIR /workdir
+    COPY +patch-squash-fs/squashfs-root-patched /workdir/squashfs-root-patched
+    RUN mksquashfs /workdir/squashfs-root-patched /workdir/nix-store.squashfs
+    SAVE ARTIFACT /workdir/nix-store.squashfs AS LOCAL build/nix-store.squashfs
 
 all:
-    BUILD +patch-squash-fs
+    BUILD +pack-squash-fs
