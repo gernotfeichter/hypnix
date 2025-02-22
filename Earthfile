@@ -50,7 +50,7 @@ pack-iso:
     WORKDIR /workdir
     USER root
     COPY +extract-iso/iso-folder /workdir/iso-folder-patched
-    COPY +pack-squash-fs/nix-store.squashfs /workdir/iso-folder-patched/nix-store-squashfs
+    COPY +pack-squash-fs/nix-store.squashfs /workdir/iso-folder-patched/nix-store.squashfs
     RUN mkisofs -o /workdir/iso-file-patched /workdir/iso-folder-patched
     SAVE ARTIFACT /workdir/iso-file-patched AS LOCAL build/iso-file-patched
 
