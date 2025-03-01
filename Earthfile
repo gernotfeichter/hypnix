@@ -6,16 +6,15 @@ download-iso:
     # NOTE: Since nixos uses channels, after the installation new package versions etc will be downloaded.
     # So it is not that important to update this ISO base version that frequently!
     ARG NIXOS_ISO_VERSION=24.11
-    RUN wget -O iso-file https://channels.nixos.org/nixos-${NIXOS_ISO_VERSION}/latest-nixos-gnome-x86_64-linux.iso
-    SAVE ARTIFACT /workdir/iso-file
-    # AS LOCAL build/iso-file
+    RUN wget -O original.iso https://channels.nixos.org/nixos-${NIXOS_ISO_VERSION}/latest-nixos-gnome-x86_64-linux.iso
+    SAVE ARTIFACT /workdir/original.iso AS LOCAL build/original.iso
 extract-iso:
     BUILD +download-iso
     FROM backplane/7z:latest@sha256:cfa611d18f31d823db7bfe2efddeb8b8dc6d83d9785a15cde03bf995f3dc604f
     WORKDIR /workdir
     USER root
-    COPY +download-iso/iso-file /workdir/iso-file
-    RUN rm -rf /workdir/iso-folder && 7zz x -tiso -y /workdir/iso-file -o/workdir/iso-folder
+    COPY +download-iso/original.iso /workdir/original.iso
+    RUN rm -rf /workdir/iso-folder && 7zz x -tiso -y /workdir/original.iso -o/workdir/iso-folder
     SAVE ARTIFACT /workdir/iso-folder
     # AS LOCAL build/iso-folder
 extract-squash-fs:
@@ -51,8 +50,8 @@ pack-iso:
     USER root
     COPY +extract-iso/iso-folder /workdir/iso-folder-patched
     COPY +pack-squash-fs/nix-store.squashfs /workdir/iso-folder-patched/nix-store.squashfs
-    RUN mkisofs -o /workdir/iso-file-patched /workdir/iso-folder-patched
-    SAVE ARTIFACT /workdir/iso-file-patched AS LOCAL build/iso-file-patched
+    RUN mkisofs -o /workdir/patched.iso /workdir/iso-folder-patched
+    SAVE ARTIFACT /workdir/patched.iso AS LOCAL build/patched.iso
 
 all:
     BUILD +pack-iso
