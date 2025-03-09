@@ -18,7 +18,7 @@
 
 - [nixos](branding/nixos) generic NixOS branding based on the [nixos homepage](https://github.com/NixOS/nixos-homepage)
 
-
+^
 ## Licenses
 
 Most code (.py, .cpp, etc) files are licensed under GPL-3.0-or-later, but see specific files for details.
