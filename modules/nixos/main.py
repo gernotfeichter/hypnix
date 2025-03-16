@@ -12,6 +12,7 @@ import libcalamares
 import os
 import subprocess
 import re
+import shutil
 
 import gettext
 
@@ -379,12 +380,18 @@ def catenate(d, key, *values):
 
     d[key] = "".join(values)
 
-def add_hypnix_base_config_tree(hypnix_variables, source_template_path, dest_config_base_path):
+def add_hypnix_base_config_tree(hypnix_variables, src_config_base_path, dest_config_base_path):
     # copy base tree
-    # TODO: Gernot
+    shutil.copytree(
+        os.path.join(src_config_base_path, "hypnix"),
+        dest_config_base_path,
+        symlinks=True,
+        dirs_exist_ok=True
+    )
 
     # handle files that require substitution (hypnix/configuration.nix)
-    with open(source_template_path, "r") as hypnix_config_template_file:
+    configuration_nix_file = os.path.join(src_config_base_path, "hypnix", "configuration.nix")
+    with open(configuration_nix_file, "r") as hypnix_config_template_file:
         # read un-templated file
         hypnix_config_template_file_txt = hypnix_config_template_file.read()
 
@@ -716,7 +723,7 @@ def run():
     libcalamares.job.setprogress(0.20)
     add_hypnix_base_config_tree(
         hypnix_variables,
-        os.path.join(calamares_base_path, "hypnix", "configuration.nix"),
+        calamares_base_path,
         os.path.join(root_mount_point, "etc", "nixos")
     )
 
