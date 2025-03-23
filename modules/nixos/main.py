@@ -802,7 +802,7 @@ def run():
         return (_("nixos-generate-config failed"), _(e.output.decode("utf8")))
 
     # Check for unfree stuff in hardware-configuration.nix
-    hf = open(orginal_nixos_hardware_configuration_nix, "r")
+    hf = open(os.path.join(root_mount_point, "etc", "nixos", "hardware-configuration.nix"), "r")
     htxt = hf.read()
     search = re.search(r"boot\.extraModulePackages = \[ (.*) \];", htxt)
 
