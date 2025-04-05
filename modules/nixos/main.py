@@ -793,7 +793,7 @@ def run():
     try:
         # Generate hardware.nix with mounted swap device
         subprocess.check_output(
-            ["pkexec", "nixos-generate-config", "--root", hardware_config_folder],
+            ["pkexec", "nixos-generate-config", "--root", root_mount_point],
             stderr=subprocess.STDOUT,
         )
     except subprocess.CalledProcessError as e:
