@@ -9,7 +9,7 @@
   ];
 
   options.hypnix = {
-    standardUser = mkOption {
+    standardUser = lib.mkOption {
       type = types.str;
       description = ''
         The standard user name (not root) of the nixos multi-user installation.
