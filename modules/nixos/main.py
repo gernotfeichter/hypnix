@@ -428,7 +428,6 @@ def run():
     calamares_base_path = "/run/current-system/sw/share/calamares"
     root_mount_point = gs.value("rootMountPoint")
     hardware_config_folder = os.path.join(root_mount_point, "etc", "nixos", "hardware", "default-machine-name")
-    orginal_nixos_hardware_configuration_nix = os.path.join(root_mount_point, "etc", "nixos", "hardware-configuration.nix")
     config_path = os.path.join(hardware_config_folder, "configuration.nix")  # yes, even configuration.nix contains hardware-specifics, hence in the hardware_folder!
     fw_type = gs.value("firmwareType")
     bootdev = (
@@ -793,7 +792,7 @@ def run():
     try:
         # Generate hardware.nix with mounted swap device
         subprocess.check_output(
-            ["pkexec", "nixos-generate-config", "--root", root_mount_point],
+            ["pkexec", "nixos-generate-config", "--root", hardware_config_folder],
             stderr=subprocess.STDOUT,
         )
     except subprocess.CalledProcessError as e:
@@ -802,7 +801,7 @@ def run():
         return (_("nixos-generate-config failed"), _(e.output.decode("utf8")))
 
     # Check for unfree stuff in hardware-configuration.nix
-    hf = open(os.path.join(root_mount_point, "etc", "nixos", "hardware-configuration.nix"), "r")
+    hf = open(os.path.join(hardware_config_folder, "hardware-configuration.nix"), "r")
     htxt = hf.read()
     search = re.search(r"boot\.extraModulePackages = \[ (.*) \];", htxt)
 
@@ -844,7 +843,7 @@ def run():
             [
                 "cp",
                 "/dev/stdin",
-                orginal_nixos_hardware_configuration_nix,
+                os.path.join(hardware_config_folder, "hardware-configuration.nix"),
             ],
             None,
             hardwareout,
