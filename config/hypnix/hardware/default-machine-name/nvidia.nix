@@ -1,4 +1,10 @@
 { config, ... }:
+# Sets nvidia related options.
+# Enabled per default deliberately (that means also on non-nvidia machines), why?
+# - Surprisingly I noticed that this config also runs fine on machines without nvidia graphics cards (at least on mine).
+# - User experience: If I have an nvidia graphics card or switch to one, my config will just work per default (hopefully in most cases, linux and nvidia was always not the best friendship).
+# - Devloper experience: No complicated logic to detect nvidia graphics cards required.
+
 {
 
   # Enable OpenGL
