@@ -382,11 +382,14 @@ def catenate(d, key, *values):
 
 def add_hypnix_base_config_tree(hypnix_variables, src_config_base_path, dest_config_base_path):
     # copy base tree
-    shutil.copytree(
-        os.path.join(src_config_base_path, "hypnix"),
-        dest_config_base_path,
-        symlinks=True,
-        dirs_exist_ok=True
+    subprocess.check_output(
+        [
+            "rsync",
+            "-avL",  # -a for archive mode (recursive, preserves permissions, etc.), -v for verbose, -L for follow symlinks
+            "--delete",  # Delete extraneous files in dest
+            os.path.join(src_config_base_path, "hypnix") + "/",  # Trailing slash is important for rsync to copy contents
+            dest_config_base_path,
+        ]
     )
 
     # handle files that require substitution (hypnix/configuration.nix)
@@ -792,7 +795,7 @@ def run():
     try:
         # Generate hardware.nix with mounted swap device
         subprocess.check_output(
-            ["pkexec", "nixos-generate-config", "--root", hardware_config_folder],
+            ["pkexec", "nixos-generate-config", "--dir", hardware_config_folder],
             stderr=subprocess.STDOUT,
         )
     except subprocess.CalledProcessError as e:
