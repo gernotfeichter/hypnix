@@ -384,8 +384,9 @@ def add_hypnix_base_config_tree(hypnix_variables, src_config_base_path, dest_con
     # copy base tree
     subprocess.check_output(
         [
+            "pkexec"
             "rsync",
-            "-avL",  # -a for archive mode (recursive, preserves permissions, etc.), -v for verbose, -L for follow symlinks
+            "-ravL",  # -a for archive mode (recursive, preserves permissions, etc.), -v for verbose, -L for follow symlinks
             "--delete",  # Delete extraneous files in dest
             os.path.join(src_config_base_path, "hypnix") + "/",  # Trailing slash is important for rsync to copy contents
             dest_config_base_path,
