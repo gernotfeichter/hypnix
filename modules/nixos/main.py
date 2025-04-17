@@ -381,10 +381,10 @@ def catenate(d, key, *values):
     d[key] = "".join(values)
 
 def add_hypnix_base_config_tree(hypnix_variables, src_config_base_path, dest_config_base_path):
-    # copy base tree
+    # copy tree
     subprocess.check_output(
         [
-            "pkexec"
+            "pkexec",
             "rsync",
             "-ravL",  # -a for archive mode (recursive, preserves permissions, etc.), -v for verbose, -L for follow symlinks
             "--delete",  # Delete extraneous files in dest
