@@ -381,12 +381,22 @@ def catenate(d, key, *values):
     d[key] = "".join(values)
 
 def add_hypnix_base_config_tree(hypnix_variables, src_config_base_path, dest_config_base_path):
+    # create dest dir
+    subprocess.check_output(
+        [
+            "pkexec",
+            "mkdir",
+            "-p",
+            dest_config_base_path,
+        ]
+    )
+
     # copy tree
     subprocess.check_output(
         [
             "pkexec",
             "rsync",
-            "-ravL",  # -a for archive mode (recursive, preserves permissions, etc.), -v for verbose, -L for follow symlinks
+            "-ravl",  # -a for archive mode (recursive, preserves permissions, etc.), -v for verbose, -L for follow symlinks
             "--delete",  # Delete extraneous files in dest
             os.path.join(src_config_base_path, "hypnix") + "/",  # Trailing slash is important for rsync to copy contents
             dest_config_base_path,
