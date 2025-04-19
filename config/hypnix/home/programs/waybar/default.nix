@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-    home.packages = [pkgs.nerd-fonts.jetbrains-mono];
+    home.packages = [pkgs.jetbrains-mono];
     programs.waybar = {
       enable = true;
       systemd = {

@@ -4,6 +4,7 @@
 
   imports = [
     ./home/default.nix
+    ./hardware.nix
     ./configuration-machine-specific.nix
     ./packages.nix
   ];
