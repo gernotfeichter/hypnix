@@ -33,7 +33,7 @@ in {
   boot.initrd.systemd.initrdBin = [ pkgs.wpa_supplicant pkgs.coreutils pkgs.systemd ];
 
   # clevis
-  boot.initrd.clevis.enable = true;
+  boot.initrd.clevis.enable = false;
   boot.initrd.clevis.useTang = true;
   boot.initrd.clevis.devices."luks-${luksDeviceId}".secretFile = secrets/luks.jwe;
   boot.initrd.systemd.users.root.shell = "/bin/systemd-tty-ask-password-agent";
