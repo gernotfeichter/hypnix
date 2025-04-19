@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-    home.packages = [pkgs.jetbrains-mono];
+    home.packages = [pkgs.nerdfonts];
     programs.waybar = {
       enable = true;
       systemd = {
@@ -136,7 +136,6 @@
         "position" = "top";
         modules-left = [
           "custom/launcher"
-          "mpd"
           "custom/cava-internal"
         ];
         modules-center = [
