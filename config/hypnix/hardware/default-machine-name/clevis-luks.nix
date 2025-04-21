@@ -26,8 +26,8 @@ in {
 
   # networking
   boot.initrd.systemd.enable = true;
-  boot.initrd.network.enable = true;
-  boot.initrd.systemd.network.enable = true;
+  boot.initrd.network.enable = false;
+  boot.initrd.systemd.network.enable = false;
   boot.initrd.systemd.network.wait-online.enable = true;
   boot.initrd.systemd.emergencyAccess = true;
   boot.initrd.systemd.initrdBin = [ pkgs.wpa_supplicant pkgs.coreutils pkgs.systemd ];
