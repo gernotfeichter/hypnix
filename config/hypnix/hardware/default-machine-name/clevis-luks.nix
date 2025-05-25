@@ -14,7 +14,7 @@ let
   allKernelModulesList = map (x: builtins.elemAt (pkgs.lib.match ".*/(.*)\.ko" x) 0) kernelModulePaths;
   # code for generating allKernelModulesList - END
 in {
-  mkIf enabled {
+  config = mkIf enabled {
     # kernel modules allowed to be loaded in initrd boot phase (all)
     boot.initrd.availableKernelModules = allKernelModulesList;
 
@@ -55,5 +55,5 @@ in {
 
     # dns
     boot.initrd.services.resolved.enable = true;
-  }
+  };
 }
