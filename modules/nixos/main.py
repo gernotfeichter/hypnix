@@ -801,9 +801,10 @@ def run():
     libcalamares.job.setprogress(0.25)
 
     try:
-        # Generate hardware.nix with mounted swap device
+        # Generate configuration.nix and hardware-configuration.nix with mounted swap device
+        # Note: Not using --root root_mount_point has drastically different results and would contain mounts of the live/iso/installer system, not what we want!
         subprocess.check_output(
-            ["pkexec", "nixos-generate-config", "--dir", hardware_config_folder],
+            ["pkexec", "nixos-generate-config", "--root", root_mount_point, "--force"],
             stderr=subprocess.STDOUT,
         )
     except subprocess.CalledProcessError as e:
