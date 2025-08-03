@@ -381,16 +381,6 @@ def catenate(d, key, *values):
     d[key] = "".join(values)
 
 def add_hypnix_base_config_tree(hypnix_variables, src_config_base_path, dest_config_base_path):
-    # create dest dir
-    subprocess.check_output(
-        [
-            "pkexec",
-            "mkdir",
-            "-p",
-            dest_config_base_path,
-        ]
-    )
-
     # copy tree
     subprocess.check_output(
         [
@@ -441,8 +431,9 @@ def run():
     # Setup variables
     calamares_base_path = "/run/current-system/sw/share/calamares"
     root_mount_point = gs.value("rootMountPoint")
-    hardware_config_folder = os.path.join(root_mount_point, "etc", "nixos", "hardware", "default-machine-name")
-    config_path = os.path.join(hardware_config_folder, "configuration.nix")  # yes, even configuration.nix contains hardware-specifics, hence in the hardware_folder!
+    dest_config_base_path = os.path.join(root_mount_point, "etc", "nixos")
+    dest_hardware_config_folder = os.path.join(dest_config_base_path, "hardware", "default-machine-name")
+    config_path = os.path.join(dest_hardware_config_folder, "configuration.nix")  # yes, even configuration.nix contains hardware-specifics, hence in the hardware_folder!
     fw_type = gs.value("firmwareType")
     bootdev = (
         "nodev"
@@ -734,6 +725,27 @@ def run():
 
     # geneate hypnix base config (NixOs standard config files (configuration.nix and hardware-confguration.nix) will be merged in later below!)
     libcalamares.job.setprogress(0.20)
+
+    # create dest dir
+    subprocess.check_output(
+        [
+            "pkexec",
+            "mkdir",
+            "-p",
+            dest_config_base_path,
+        ]
+    )
+    # Generate configuration.nix and hardware-configuration.nix with mounted swap device
+    # Note: Not using --root root_mount_point has drastically different results and would contain mounts of the live/iso/installer system, not what we want!
+    subprocess.check_output(
+        ["pkexec", "nixos-generate-config", "--root", root_mount_point, "--force"],
+        stderr=subprocess.STDOUT,
+    )
+    # now move the generated files to fit the hypnix folder structure
+    subprocess.check_output(
+        ["pkexec", "mv", os.path.join(root_mount_point, "configuration.nix"), os.path.join(root_mount_point, "hardware-configuration.nix"), dest_hardware_config_folder],
+        stderr=subprocess.STDOUT,
+    )
     add_hypnix_base_config_tree(
         hypnix_variables,
         calamares_base_path,
@@ -800,20 +812,8 @@ def run():
     status = _("Generating NixOS configuration")
     libcalamares.job.setprogress(0.25)
 
-    try:
-        # Generate configuration.nix and hardware-configuration.nix with mounted swap device
-        # Note: Not using --root root_mount_point has drastically different results and would contain mounts of the live/iso/installer system, not what we want!
-        subprocess.check_output(
-            ["pkexec", "nixos-generate-config", "--root", root_mount_point, "--force"],
-            stderr=subprocess.STDOUT,
-        )
-    except subprocess.CalledProcessError as e:
-        if e.output is not None:
-            libcalamares.utils.error(e.output.decode("utf8"))
-        return (_("nixos-generate-config failed"), _(e.output.decode("utf8")))
-
     # Check for unfree stuff in hardware-configuration.nix
-    hf = open(os.path.join(hardware_config_folder, "hardware-configuration.nix"), "r")
+    hf = open(os.path.join(dest_hardware_config_folder, "hardware-configuration.nix"), "r")
     htxt = hf.read()
     search = re.search(r"boot\.extraModulePackages = \[ (.*) \];", htxt)
 
@@ -855,7 +855,7 @@ def run():
             [
                 "cp",
                 "/dev/stdin",
-                os.path.join(hardware_config_folder, "hardware-configuration.nix"),
+                os.path.join(dest_hardware_config_folder, "hardware-configuration.nix"),
             ],
             None,
             hardwareout,
