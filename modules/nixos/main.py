@@ -743,7 +743,7 @@ def run():
     )
     # now move the generated files to fit the hypnix folder structure
     subprocess.check_output(
-        ["pkexec", "mv", os.path.join(root_mount_point, "configuration.nix"), os.path.join(root_mount_point, "hardware-configuration.nix"), dest_hardware_config_folder],
+        ["pkexec", "mv", os.path.join(root_mount_point, "etc", "nixos", "configuration.nix"), os.path.join(root_mount_point, "hardware-configuration.nix"), dest_hardware_config_folder],
         stderr=subprocess.STDOUT,
     )
     add_hypnix_base_config_tree(
