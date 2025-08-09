@@ -432,8 +432,8 @@ def run():
     calamares_base_path = "/run/current-system/sw/share/calamares"
     root_mount_point = gs.value("rootMountPoint")
     dest_config_base_path = os.path.join(root_mount_point, "etc", "nixos")
-    dest_hardware_config_folder = os.path.join(dest_config_base_path, "hardware", "default-machine-name")
-    config_path = os.path.join(dest_hardware_config_folder, "configuration.nix")  # yes, even configuration.nix contains hardware-specifics, hence in the hardware_folder!
+    dest_config_folder = os.path.join(dest_config_base_path, "hardware", "default-machine-name")
+    dest_configuration_nix_path = os.path.join(dest_config_folder, "configuration.nix")  # yes, even configuration.nix contains hardware-specifics, hence in the hardware_folder!
     fw_type = gs.value("firmwareType")
     bootdev = (
         "nodev"
@@ -726,13 +726,13 @@ def run():
     # geneate hypnix base config (NixOs standard config files (configuration.nix and hardware-confguration.nix) will be merged in later below!)
     libcalamares.job.setprogress(0.20)
 
-    # create dest dir
+    # create final dest dir for nixos-generate-config
     subprocess.check_output(
         [
             "pkexec",
             "mkdir",
             "-p",
-            dest_config_base_path,
+            os.path.join(dest_config_base_path, "hardware", "default-machine-name")
         ]
     )
     # Generate configuration.nix and hardware-configuration.nix with mounted swap device
@@ -740,10 +740,10 @@ def run():
     subprocess.check_output(
         ["pkexec", "nixos-generate-config", "--root", root_mount_point, "--force"],
         stderr=subprocess.STDOUT,
-    )
+    )    
     # now move the generated files to fit the hypnix folder structure
     subprocess.check_output(
-        ["pkexec", "mv", os.path.join(root_mount_point, "etc", "nixos", "configuration.nix"), os.path.join(root_mount_point, "hardware-configuration.nix"), dest_hardware_config_folder],
+        ["pkexec", "mv", os.path.join(root_mount_point, "etc", "nixos", "configuration.nix"), os.path.join(root_mount_point, "etc", "nixos", "hardware-configuration.nix"), dest_config_folder],
         stderr=subprocess.STDOUT,
     )
     add_hypnix_base_config_tree(
@@ -813,7 +813,7 @@ def run():
     libcalamares.job.setprogress(0.25)
 
     # Check for unfree stuff in hardware-configuration.nix
-    hf = open(os.path.join(dest_hardware_config_folder, "hardware-configuration.nix"), "r")
+    hf = open(os.path.join(dest_config_folder, "hardware-configuration.nix"), "r")
     htxt = hf.read()
     search = re.search(r"boot\.extraModulePackages = \[ (.*) \];", htxt)
 
@@ -855,14 +855,14 @@ def run():
             [
                 "cp",
                 "/dev/stdin",
-                os.path.join(dest_hardware_config_folder, "hardware-configuration.nix"),
+                os.path.join(dest_config_folder, "hardware-configuration.nix"),
             ],
             None,
             hardwareout,
         )
 
     # Write the configuration.nix file
-    libcalamares.utils.host_env_process_output(["cp", "/dev/stdin", config_path], None, cfg)
+    libcalamares.utils.host_env_process_output(["cp", "/dev/stdin", dest_configuration_nix_path], None, cfg)
 
     status = _("Installing NixOS")
     libcalamares.job.setprogress(0.3)
