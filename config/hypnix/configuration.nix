@@ -6,7 +6,9 @@
     ./home/default.nix
     ./hardware.nix
     ./configuration-machine-specific.nix
-    ./packages.nix
+    ./packages-system.nix
+    ./packages-user.nix
+    ./programs.nix
   ];
 
   options.hypnix = {

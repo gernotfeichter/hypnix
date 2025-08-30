@@ -31,27 +31,4 @@
       bundletool
       python3
    ];
-
-  environment.systemPackages = with pkgs; [
-    # For a list of available packages,see: https://search.nixos.org/packages
-    networkmanager
-    wget
-    clevis
-    git
-    gh
-    kitty
-    wl-clipboard
-    gparted
-    alp
-    dig
-    binwalk
-    killall
-    brightnessctl
-    usbutils
-    unzip
-    cmake
-    meson
-    cpio
-  ];
-
 }
