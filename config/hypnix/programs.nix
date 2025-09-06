@@ -28,12 +28,12 @@
         #  set clipboard=unnamedplus
         #'';
       };
-    }
+    };
     nm-applet = {
       enable = true;
-    }
+    };
     hyprland = {
       enable = true;
-    }
+    };
   };
 }
