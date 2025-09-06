@@ -17,5 +17,5 @@
       pkgs.brgenml1cupswrapper
       pkgs.cnijfilter2
     ];
-  }
+  };
 }
