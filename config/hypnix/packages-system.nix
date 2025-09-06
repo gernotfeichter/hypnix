@@ -12,14 +12,10 @@
     gparted
     alp
     dig
-    binwalk
     killall
     brightnessctl
     usbutils
     unzip
-    cmake
-    meson
-    cpio
     pciutils
   ];
 }
