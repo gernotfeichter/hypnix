@@ -9,7 +9,7 @@
     ./packages-system.nix
     ./packages-user.nix
     ./programs.nix
-    ./sddm.nix
+    ./displaymanager.nix
   ];
 
   options.hypnix = {
