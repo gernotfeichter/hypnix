@@ -1,27 +1,51 @@
-# fork
+# hypnix
 
-> WIP: This is currently under development and not usable!
+First hyprland baked iso-installable linux distro (or pseudo-distro), since this is almost 100% nixos!
 
-This folder contains this forked repo state: https://github.com/NixOS/calamares-nixos-extensions/releases/tag/0.3.19.
+> open alpha, [download here](https://drive.google.com/drive/folders/1HDrhGZFeXwFT8lUaF6di-TJMUIaO02Bo)!
 
-The code in this folder contains the calameres (nixos installation program - live installer) config and customizations for nixos and respective for hypnix on top of that.
-Hypnix is basically just a NixOS config seeder (installer).
-After you installed Hpynix, you just have a NixOS with your custom configuration.
+![image](config/images/hyprland.png)
 
-Notable changes after forking:
-- The original README was renamed to [README_original.md](README_original.md).
-- Non-relevant desktop environments were removed from config files, not so from the code (should not hurt much), to reduce git conflict potential of this fork.
-- The default size of the `/boot` partition was increased from `512MB` to `5GB` to avoid the common error `No space left on /boot` - https://discourse.nixos.org/t/no-space-left-on-boot/24019/11.
-- Hypnix specific config structure re-writings. But since the hypnix configs also load the traditional NixOS config files (configuration.nix - which also loads hardware-configuration.nix) we keep high NixOS base compatiblilty.
+# shortcuts
 
-## building
+| key combination | effect |
+|---|---|
+| `SUPER` | open launcher (rofi) |
+| `SUPER` + `ENTER` | open terminal (kitty) |
+| `SUPER` + `<arrow key>` | shift focus to window on the left, right, up or down |
+| `SUPER` + `ALT` + `<arrow key>` | move window to the left, right, up or down |
+| `SUPER` + `<number>` | move to workspace number (numbered from 0 to 10) |
+| `SUPER` + `SHIFT` + `<number>` | move window to workspace number (numbered from 0 to 10) and switch to that workspace |
+| `SUPER` + `F` | floating mode - window can be placed anywhere |
+| `SUPER` + `B` | toggle visibiliy of top bar (waybar) |
+| `SUPER` + `<left mouse button while moving mouse>` | move window with mouse |
+| `SUPER` + `<right mouse button while moving mouse>` | resize window with mouse |
+| `SUPER` + `CRTL` + `<arrow key>` | resize window with keyboard |
+| `SUPER` + `TAB` | rotate between windows (only applicable in certain contexts, e.g. fullscreen or floating mode) |
+| `SUPER` + `+` | fullscreen |
+| `SUPER` + `ALT` + `+` | fakefullscreen (using this a monicle-layout along with `SUPER` + `TAB` to rotate between windows in a workspace) |
 
-1. Git clone the [nixpkgs fork of hypnix](https://github.com/gernotfeichter/nixpkgs/tree/feat/hypnix).
-2. In that fork, alter the [package.nix](../nixpkgs/pkgs/by-name/ca/calamares-hypnix-extensions/package.nix) to point to your changed version of the hpynix repository (not the fork).
-   Change the version number(or you migth run into bad caching issues), in addition to the revision.
-   Build the calamares-hypnix-extensions package: `nix-build -A pkgs.calamares-hypnix-extensions` (working dir: root of fork git repo!)
-   After the first failed build you should read the new hash the hash! Enter the new hash into the package.nix and rebuild!
-3. Build the iso: `nix-build -A config.system.build.isoImage -I nixos-config=modules/installer/cd-dvd/installation-cd-graphical-calamares-hypnix.nix` (working dir: nixos folder, one level below fork git repo root folder!)
-   NOTE down the ISO_FILE_PATH, the line that contains it, looks like this: `Writing to 'stdio:/nix/store/1wg14npymm483vxz7xmyiszqd4fnzvcb-nixos-24.11pre-git-x86_64-linux.iso/iso/nixos-24.11pre-git-x86_64-linux.iso' completed successfully.`
-4. Burn the image to a device (replace the DEVICE and ISO_FILE_PATH; e.g. I replace DEVICE by /dev/sdb, because this is my USB stick):
-   `sudo dd bs=4M conv=fsync oflag=direct status=progress if=ISO_FILE_PATH of=DEVICE`
+# how to change anything
+
+To install packages, change system configuration or anything similar, the procedure is always to edit some config file followed by a rebuild:
+- `cd /etc/nixos && sudo -E su`<br>
+  Note: `-E` to inherit access to the wayland session, e.g. to be even able to copy things from the browser (running as non-root) to the text editor (running as root).
+- Edit files in this directory (see [overview](config/hypnix/readme.md)), e.g.
+  - `nano packages.nix` (more beginner friendly)
+  - `v packages.nix` (vi alias: v)
+- `nixos-rebuild switch --impure`<br>
+  (--impure only required when this dir is in git)
+
+> If you messed up your config so that you cannot boot anymore, reboot and select an older revision in the boot loader. This is a basic nixos-feature.
+
+# roadmap
+
+TODO
+
+# developer information
+
+Check [dev.md](dev.md).
+
+# tribute
+
+Much stuff came from https://github.com/HeinzDev/Hyprland-dotfiles and of course there are too many projects involved here to thank everyone!
