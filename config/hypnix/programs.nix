@@ -16,6 +16,10 @@
           "docker"
         ];
       };
+      shellAliases = {
+        v = "nvim";
+	      vi = "nvim";
+      };
     };
     neovim = {
       enable = true;

@@ -243,7 +243,7 @@ cfgmisc = """  # Enable CUPS to print documents.
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -867,6 +867,16 @@ def run():
 
     # Write the configuration.nix file
     libcalamares.utils.host_env_process_output(["cp", "/dev/stdin", dest_configuration_nix_path], None, cfg)
+
+    # Fix permissions to ensure /etc/nixos and subdirectories are writable
+    try:
+        libcalamares.job.setprogress(0.26)
+        status = _("Setting permissions on configuration files")
+        # Ensure root owns the files and they are writable (755 for dirs, 644 for files)
+        subprocess.check_output(["pkexec", "chown", "-R", "root:root", os.path.join(root_mount_point, "etc", "nixos")])
+        subprocess.check_output(["pkexec", "chmod", "-R", "u+rw", os.path.join(root_mount_point, "etc", "nixos")])
+    except subprocess.CalledProcessError as e:
+        libcalamares.utils.warning(f"Failed to set permissions: {e}")
 
     status = _("Installing NixOS")
     libcalamares.job.setprogress(0.3)

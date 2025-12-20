@@ -48,7 +48,7 @@ in {
     boot.initrd.secrets."/etc/wpa_supplicant/wpa_supplicant-${interfaceWifi}.conf" = secrets/wpa_supplicant.conf;
 
     # ethernet
-    boot.initrd.systemd.network.networks."10-wlan" = {
+    boot.initrd.systemd.network.networks."10-eth" = {
       matchConfig.Name = interfaceEth;
       networkConfig.DHCP = "yes";
     };

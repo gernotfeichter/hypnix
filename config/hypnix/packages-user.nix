@@ -3,7 +3,6 @@
   users.users."${config.hypnix.standardUser}".packages = with pkgs; [
       # For a list of available packages,see: https://search.nixos.org/packages
       firefox
-      kate
       google-chrome
       libreoffice-qt
       vlc
@@ -12,5 +11,6 @@
       wlsunset
       gimp
       hyprshot
+      inkscape
    ];
 }

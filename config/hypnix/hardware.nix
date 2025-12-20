@@ -18,4 +18,7 @@
       pkgs.cnijfilter2
     ];
   };
+
+  services.ntp.enable = true;
+  services.blueman.enable = true;
 }

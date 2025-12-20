@@ -10,20 +10,21 @@
     ./packages-user.nix
     ./programs.nix
     ./displaymanager.nix
+    ./modules/hypnix.nix
   ];
 
-  options.hypnix = {
-    standardUser = lib.mkOption {
-      type = lib.types.str;
-      description = ''
-        The standard user name (not root) of the nixos multi-user installation.
-      '';
-      default = false;
-    };
-  };
-
   config = {
-    hypnix.standardUser = "@@username@@";
+    users.defaultUserShell = pkgs.zsh;
+    boot.loader.systemd-boot.configurationLimit = 5;
+    nix.gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 90d";
+    };
+    nixpkgs.config.permittedInsecurePackages = [
+      "mbedtls-2.28.10"
+    ];
+    hypnix.standardUser = "@@username@@"; # warning: do not change this, especially if you have no /etc/passwd entry!
   };
 
 }
