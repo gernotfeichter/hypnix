@@ -1,10 +1,10 @@
 # hypnix
 
-First hyprland baked iso-installable linux distro (or pseudo-distro), since this is almost 100% nixos!
+First hyprland baked iso-installable linux distro (or pseudo-distro), since this is 100% nixos but with a different default config!
 
 > open alpha, [download here](https://drive.google.com/drive/folders/1HDrhGZFeXwFT8lUaF6di-TJMUIaO02Bo)!
 
-![image](config/images/hyprland.png)
+[![image](config/images/hyprland.png)](https://www.youtube.com/watch?v=hgx2MeJQ9CQ)
 
 # shortcuts
 
