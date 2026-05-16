@@ -33,8 +33,8 @@ To install packages, change system configuration or anything similar, the proced
 - Edit files in this directory (see [overview](config/hypnix/readme.md)), e.g.
   - `nano packages.nix` (more beginner friendly)
   - `v packages.nix` (vi alias: v)
-- nix-channel --update<br>
-  Optional - only required if you want to update to to latest versions
+- `nix-channel --update`<br>
+  Optional - only required if you want to update to the latest versions
 - `nixos-rebuild switch --impure`<br>
   (--impure only required when this dir is in git)
 
