@@ -23,7 +23,9 @@ First hyprland baked iso-installable linux distro (or pseudo-distro), since this
 | `SUPER` + `CRTL` + `<arrow key>` | resize window with keyboard |
 | `SUPER` + `TAB` | rotate between windows (only applicable in certain contexts, e.g. fullscreen or floating mode) |
 | `SUPER` + `+` | fullscreen |
-| `SUPER` + `ALT` + `+` | fakefullscreen (using this a monicle-layout along with `SUPER` + `TAB` to rotate between windows in a workspace) |
+| `SUPER` + `ALT` + `+` | fakefullscreen (using this as monicle-layout along with `SUPER` + `TAB` to rotate between windows in a workspace) |
+| `SUPER` + `SHIFT`+ `<arrow key>` | terminal (kitty): scroll up/down |
+| `SUPER` + `SHIFT` + `h` | terminal (kitty): output string search - type `?` for search from bottom to top, followed by the search term and `ENTER` |
 
 # how to change anything
 
