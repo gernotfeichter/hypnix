@@ -48,5 +48,9 @@ For this purpose, the `alp.nix` file (typically located at `hardware/<machine-na
    cd /etc/nixos && sudo -E su
    nixos-rebuild switch --impure
    ```
+4. Test:
+   ```bash
+   sudo -k echo test
+   ```
 
 A successful authentication request via `sudo` will now trigger a prompt on your Android device.
