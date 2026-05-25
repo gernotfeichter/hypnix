@@ -18,7 +18,8 @@ To unlock your LUKS disk at boot, we use `clevis` configured as a Tang client in
 let
   enabled = true;
   interfaceWifi = "wlp0s20u5"; # Adjust to your Wi-Fi interface if necessary, run: ip addr to see available interfaces
-  
+```
+
 > **Note**: This file already includes the necessary overrides to establish networking in `initrd` (which is required because your hypnix machine needs to communicate with the Android device during early boot). Consider commenting out wifi options when using ethernet, and vice versa.
 
 ### Binding the Tang Server
@@ -31,6 +32,6 @@ let
    clevis luks bind -d /dev/disk/by-uuid/<your-luks-uuid> tang '{"url":"http://192.168.1.100:7654"}' > /etc/nixos/secrets/luks.jwe
    ```
    *This process will prompt you for your current LUKS passphrase and then ask the tang server for the keys to generate a new JWE token.*
-4. Rebuild your system configuration.
+3. Rebuild your system configuration.
 
 Next time you boot, `initrd` will wait for an internet connection, connect to the Tang server on your phone, and automatically decrypt the disk.
