@@ -4,7 +4,7 @@ First hyprland baked iso-installable linux distro (or pseudo-distro), since this
 
 > open alpha, [download here](https://drive.google.com/drive/folders/1HDrhGZFeXwFT8lUaF6di-TJMUIaO02Bo)!
 
-[![image](config/images/hyprland.png)](https://www.youtube.com/watch?v=hgx2MeJQ9CQ)
+[![image](img/hyprland.png)](https://www.youtube.com/watch?v=hgx2MeJQ9CQ)
 
 # shortcuts
 
