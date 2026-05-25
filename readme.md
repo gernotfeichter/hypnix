@@ -2,6 +2,8 @@
 
 First hyprland baked iso-installable linux distro (or pseudo-distro), since this is 100% nixos but with a different default config!
 
+A key feature of hypnix is the option of using an android device to handle operating-system level authentication, which means **"no more password typing"** - see [pills / guides](#pills--guides).
+
 > open alpha, [download here](https://drive.google.com/drive/folders/1HDrhGZFeXwFT8lUaF6di-TJMUIaO02Bo)!
 
 [![image](img/hyprland.png)](https://www.youtube.com/watch?v=hgx2MeJQ9CQ)
@@ -41,6 +43,11 @@ To install packages, change system configuration or anything similar, the proced
   (--impure only required when this dir is in git)
 
 > If you messed up your config so that you cannot boot anymore, reboot and select an older revision in the boot loader. This is a basic nixos-feature.
+
+# pills / guides
+
+- [sudo/login via android](pills/1-android-linux-pam.md)
+- [disk decryption via android](pills/2-clevis-luks-decryption.md)
 
 # roadmap
 
