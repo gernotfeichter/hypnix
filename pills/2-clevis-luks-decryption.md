@@ -32,6 +32,6 @@ let
    clevis luks bind -d /dev/disk/by-uuid/<your-luks-uuid> tang '{"url":"http://192.168.1.100:7654"}' > /etc/nixos/secrets/luks.jwe
    ```
    *This process will prompt you for your current LUKS passphrase and then ask the tang server for the keys to generate a new JWE token.*
-3. Rebuild your system configuration.
+3. `nixos-rebuild switch --impure`
 
 Next time you boot, `initrd` will wait for an internet connection, connect to the Tang server on your phone, and automatically decrypt the disk.
