@@ -4,9 +4,10 @@ This guide explains how to configure `clevis` together with the Android `tanga` 
 
 ## Prerequisites
 
-1. An Android device running the [tanga](https://github.com/gernotfeichter/tanga) application (for Tang server support).
+1. An android device running the [tanga](https://github.com/gernotfeichter/tanga) application (for Tang server support).
 2. You must have already configured LUKS encryption on your system. This is the case when you selected "Encrypt Disk" with a password during the installation.
-3. Your hypnix machine's IP address should ideally be static or assigned a fixed DHCP lease. Using the device Name may be another option, but afaik this feature is android version dependendent.
+3. Your android device's IP address should ideally be static or assigned a fixed DHCP lease. Using the device Name may be another option, but afaik this feature is android version dependendent.
+4. Your android device is connected to the same network as your hypnix machine.
 
 ---
 
@@ -14,10 +15,12 @@ This guide explains how to configure `clevis` together with the Android `tanga` 
 
 To unlock your LUKS disk at boot, we use `clevis` configured as a Tang client in early-boot (`initrd`). The Android device (via the `tanga` app) will act as the Tang server.
 
+Edit the file hardware/\<machine-name\>/clevis-luks.nix to enable and configure unlocking.
 ```
 let
   enabled = true;
-  interfaceWifi = "wlp0s20u5"; # Adjust to your Wi-Fi interface if necessary, run: ip addr to see available interfaces
+  interfaceWifi = "wlp0s20u5"; # Adjust to your Wi-Fi interface, if necessary, run: ip addr to see available interfaces
+  interfaceEth = "enp7s0"; # Adjust to your ethernet interface, if necessary, run: ip addr to see available interfaces
 ```
 
 > **Note**: This file already includes the necessary overrides to establish networking in `initrd` (which is required because your hypnix machine needs to communicate with the Android device during early boot). Consider commenting out wifi options when using ethernet, and vice versa.
@@ -28,6 +31,7 @@ let
 2. Bind your LUKS disk to the Tang server:
    ```bash
    # Replace /dev/disk/by-uuid/<your-luks-uuid> with your actual encrypted partition, same for the IP address
+   # Hint: You can find your luks uuid by running: lsblk, if you have multiple partitions, pick one, if installed with the standard hypnix installer, all off them will use the same passphrase
    sudo su
    clevis luks bind -d /dev/disk/by-uuid/<your-luks-uuid> tang '{"url":"http://192.168.1.100:7654"}' > /etc/nixos/secrets/luks.jwe
    ```
