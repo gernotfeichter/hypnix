@@ -25,6 +25,10 @@ let
 
 > **Note**: This file already includes the necessary overrides to establish networking in `initrd` (which is required because your hypnix machine needs to communicate with the Android device during early boot). Consider commenting out wifi options when using ethernet, and vice versa.
 
+When using WIFI, you must also configure the ssid and password in `/etc/nixos/hardware/<your-machine-name>/secrets/wpa_supplicant.conf`!
+
+Make sure that only root can read this file, e.g. by running: `chmod 600 /etc/nixos/hardware/<your-machine-name>/secrets/wpa_supplicant.conf`
+
 ### Binding the Tang Server
 
 1. Obtain the IP and port from the `tanga` app (e.g. `192.168.1.100:7654`).
