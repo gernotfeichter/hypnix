@@ -4,8 +4,8 @@ This guide explains how to configure `alp` (Android Linux PAM) for passwordless 
 
 ## Prerequisites
 
-1. An Android device running the [alp](https://github.com/gernotfeichter/alp) application.
-2. Your hypnix machine's IP address should ideally be static or assigned a fixed DHCP lease.
+1. An Android device running the [alp](https://play.google.com/store/apps/details?id=io.github.gernotfeichter.alp) application.
+2. Your android device IP address (for your local network) should ideally be static or assigned a fixed DHCP lease.
 
 ---
 
@@ -29,7 +29,9 @@ For this purpose, the `alp.nix` file (typically located at `hardware/<machine-na
     enableSddm = true;
     
     # Set the targets to point to the IP:Port of your Android device running alp
-    targets = [ "192.168.1.100:7654" ]; 
+    targets = [ "192.168.1.100:7654" ];
+    # Hint: when your android phone is your Hotspot and running alp, pick this instead:
+    # targets = [ "_gateway:7654" ]; 
   };
 }
 ```
@@ -39,17 +41,18 @@ For this purpose, the `alp.nix` file (typically located at `hardware/<machine-na
 1. Extract the random key generated within the `alp` android app settings.
 2. Store this key securely in the file specified by `keyFile`:
    ```bash
-   sudo mkdir -p /etc/alp
-   sudo nano /etc/alp/secret.key
-   sudo chmod 600 /etc/alp/secret.key
+   sudo -E su
+   cd /etc/nixos/hardware/<your-machine-name>
+   nano secrets/alp.key
+   chmod 600 secrets/alp.key
    ```
 3. Rebuild your system configuration for the change to take effect:
    ```bash
-   cd /etc/nixos && sudo -E su
    nixos-rebuild switch --impure
    ```
 4. Test:
    ```bash
+   exit # go back to non-root user
    sudo -k echo test
    ```
 
