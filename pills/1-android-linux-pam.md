@@ -39,7 +39,7 @@ For this purpose, the `alp.nix` file (typically located at `hardware/<machine-na
 ### Initializing the Key and Pairing
 
 1. Extract the random key generated within the `alp` android app settings.
-2. Store this key securely in the file specified by `keyFile`:
+2. Store this key securely in the file specified by `keyFile` on your linux machine:
    ```bash
    sudo -E su
    cd /etc/nixos/hardware/<your-machine-name>
