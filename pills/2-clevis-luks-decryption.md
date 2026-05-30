@@ -37,7 +37,7 @@ Make sure that only root can read this file, e.g. by running: `chmod 600 /etc/ni
    # Replace /dev/disk/by-uuid/<your-luks-uuid> with your actual encrypted partition, same for the IP address
    # Hint: You can find your luks uuid by running: lsblk, if you have multiple partitions, pick one, if installed with the standard hypnix installer, all off them will use the same passphrase
    sudo su
-   clevis luks bind -d /dev/disk/by-uuid/<your-luks-uuid> tang '{"url":"http://192.168.1.100:7500' > /etc/nixos/secrets/luks.jwe
+   echo -n '<your luks passphrase>' | clevis encrypt tang '{"url": "http://<your tang server>:7500"}' > /etc/nixos/hardware/<your-machine-name>/secrets/luks.jwe
    ```
    *This process will prompt you for your current LUKS passphrase and then ask the tang server for the keys to generate a new JWE token.*
 3. `nixos-rebuild switch --impure`
