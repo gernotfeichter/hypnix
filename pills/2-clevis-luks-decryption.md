@@ -39,7 +39,7 @@ Make sure that only root can read this file, e.g. by running: `chmod 600 /etc/ni
    sudo su
    echo -n '<your luks passphrase>' | clevis encrypt tang '{"url": "http://<your tang server>:7500"}' > /etc/nixos/hardware/<your-machine-name>/secrets/luks.jwe
    ```
-   *This process will prompt you for your current LUKS passphrase and then ask the tang server for the keys to generate a new JWE token.*
+   *This process will prompt you for your current LUKS passphrase and then ask the tang server for the keys to generate a new JWE token. The tang server must be running an accessible while this snippet is executed, as well as when the disk should be auto-decrypted at boot*
 3. `nixos-rebuild switch --impure`
 
 Next time you boot, `initrd` will wait for an internet connection, connect to the Tang server on your phone, and automatically decrypt the disk.
