@@ -4,6 +4,8 @@ First hyprland baked iso-installable linux distro (or pseudo-distro), since this
 
 A key feature of hypnix is the option of using an android device to handle operating-system level authentication, which means **"no more password typing"** - see [pills / guides](#pills--guides).
 
+Further, it comes with Hyprland, a dynamic tiling window manager with the goal of **not wasting screen space per default**, and a default configuration that is optimized for **keyboard shortcuts**, rather than mouse interaction.
+
 > open alpha, [download here](https://drive.google.com/drive/folders/1HDrhGZFeXwFT8lUaF6di-TJMUIaO02Bo)!
 
 [![image](img/hyprland.png)](https://www.youtube.com/watch?v=hgx2MeJQ9CQ)
@@ -38,7 +40,7 @@ To install packages, change system configuration or anything similar, the proced
   - `nano packages.nix` (more beginner friendly)
   - `v packages.nix` (vi alias: v)
 - `nix-channel --update`<br>
-  Optional - only required if you want to update to the latest versions
+  Optional - only required if you want to update to the latest versions (all packages of the channel!)
 - `nixos-rebuild switch --impure`<br>
   (--impure only required when this dir is in git)
 
@@ -49,9 +51,10 @@ To install packages, change system configuration or anything similar, the proced
 - [sudo/login via android](pills/1-android-linux-pam.md)
 - [disk decryption via android](pills/2-clevis-luks-decryption.md)
 
-# roadmap
+# drawbacks
 
-TODO
+- Not extremely beginner friendly (especially when doing a lot of customizations), linux knowledge helpful, however, with the help of AI even a beginner could come extremely far these days.
+- Based on NixOS and therefore inheriting all strenghts and weaknesses thereof. Example: If your nixos build/config is broken and you want to repair stuff manually, you cannot ust edit a random file, download random software from third party places etc. Everything needs to go through the nixos build and you need to focus on getting that running cleanly again, which is oftentimes hard work and may require altering .nix source files etc. However, I see the benefits outweigh and have familiarized myself with the NixOS ecosystem enough that I could live on that platform since about three years without plans of swiching. 
 
 # developer information
 
