@@ -30,6 +30,10 @@ Further, it comes with Hyprland, a dynamic tiling window manager with the goal o
 | `SUPER` + `ALT` + `+` | fakefullscreen (using this as monicle-layout along with `SUPER` + `TAB` to rotate between windows in a workspace) |
 | `SUPER` + `SHIFT`+ `<arrow key>` | terminal (kitty): scroll up/down |
 | `SUPER` + `SHIFT` + `h` | terminal (kitty): output string search - type `?` for search from bottom to top, followed by the search term and `ENTER` |
+| `PRINT` | drag to select a region → copies screenshot to clipboard (`grim -g "$(slurp)" - \| wl-copy`) |
+| `SHIFT` + `PRINT` | drag to select a region → saves screenshot to file via `grim` |
+
+For a full-screen screenshot there is no dedicated keybind, if you need this frequently, you could alter the config above to run `grim` without args instead or add an additional shortcut that.
 
 # how to change anything
 
